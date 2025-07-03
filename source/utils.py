@@ -49,7 +49,7 @@ def file_sorter():
             if "token" in file_name:
                 shutil.move(file_path, r"D:\Documents\D&D\Tokens")
             # sort from exptension
-            elif file_extension in ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp']:
+            elif file_extension in ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.ico']:
                 shutil.move(file_path, downloads_dir+'/'+"img/")
             elif file_extension in ['.pdf', '.docx', '.doc', '.xlsx', '.xls', '.pptx', '.ppt', '.txt']:
                 shutil.move(file_path, downloads_dir+'/'+"docs/")
