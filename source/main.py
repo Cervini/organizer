@@ -9,6 +9,7 @@ stop_event = threading.Event()
 
 # organize files after 5 minutes loop
 def organize_files_loop():
+    print("brooom")
     while not stop_event.is_set():
         utils.file_sorter()
         for _ in range(300):

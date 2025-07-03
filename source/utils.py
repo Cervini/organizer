@@ -2,7 +2,9 @@ import os
 import sys
 import shutil
 from typing import Optional
+from pathlib import Path
 import winreg
+import yaml
 
 def locate_folder_path() -> Optional[str]:
     if sys.platform == "win32": # Windows
@@ -28,12 +30,41 @@ def filter_file_name(path) -> str:
     name = path.split("/")
     return name[-1]
 
-def file_sorter():
+def load_config():
+
+    # get the directory where the script is located
+    script_dir = Path(__file__).resolve().parent
     
-    # Locate Download directory
+    # build the full, absolute path to the config file
+    config_file = script_dir / "config.yaml"
+
+    if not os.path.exists(config_file):
+        print(f"Error: '{config_file}' not found. Please create it.")
+        return None
+    with open(config_file, "r") as f:
+        try:
+            config = yaml.safe_load(f)
+            if "rules" in config and isinstance(config["rules"], list):
+                return config["rules"]
+            else:
+                print(f"Error: '{config_file}' is missing the 'rules' list.")
+                return None
+        except yaml.YAMLError as e:
+            print(f"Error parsing YAML file: {e}")
+            return None
+
+def file_sorter():
+
+    # locate Download directory
     downloads_dir = locate_folder_path()
 
-    # Scan folder and check files 
+    # load sorting rules
+    rules = load_config()
+
+    if not rules:
+        print("Error: missing or invalig config")
+        return
+    # scan folder and check files 
 
     # os.listdir() gives a list of every sub-directory and file name
     for filename in os.listdir(downloads_dir):
@@ -41,22 +72,40 @@ def file_sorter():
         file_path = downloads_dir + '/' + filename
         
         # check if file
-        if os.path.isfile(file_path):
-            # get file name
-            # get extention
-            file_name, file_extension = os.path.splitext(file_path)
-            # sort from name
-            if "token" in file_name:
-                shutil.move(file_path, r"D:\Documents\D&D\Tokens")
-            # sort from exptension
-            elif file_extension in ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.ico']:
-                shutil.move(file_path, downloads_dir+'/'+"img/")
-            elif file_extension in ['.pdf', '.docx', '.doc', '.xlsx', '.xls', '.pptx', '.ppt', '.txt']:
-                shutil.move(file_path, downloads_dir+'/'+"docs/")
-            elif file_extension in ['.zip', '.rar', '.7z', '.gz']:
-                shutil.move(file_path, downloads_dir+'/'+"archives/")
-            elif file_extension in ['.exe', '.msi']:
-                shutil.move(file_path, downloads_dir+'/'+"installers/")
-            else:
-                # extension not classified
-                shutil.move(file_path, downloads_dir+'/'+"others/")
+        if not os.path.isfile(file_path):
+            continue
+    
+        # get file name and extension
+        file_name, file_extension = os.path.splitext(file_path)
+
+        # Check against each rule
+        for rule in rules:
+
+            # Check if the file extension matches
+            match_extension = file_extension in rule.get("extensions", [])
+            
+            # Check if any keyword matches
+            match_keyword = False
+            if rule.get("keywords"):
+                match_keyword = any(keyword.lower() in file_name for keyword in rule["keywords"])
+
+            if match_extension or match_keyword:
+
+                # check if destination is sub-folder
+                if rule["sub"]:
+                    destination_folder = downloads_dir + "/" + rule["destination"]
+                else:
+                    destination_folder = rule["destination"]
+
+                if not os.path.isdir(destination_folder):
+                    print(f"Error: missing or invalid destination")
+                    continue
+                
+                # Move the file
+                try:
+
+                    shutil.move(file_path, destination_folder)
+                    break # Stop checking rules for this file
+                except Exception as e:
+                    print(f"Error moving {file_path.name}: {e}")
+                    break

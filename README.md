@@ -6,7 +6,7 @@ A simple Windows utility that runs in the background to automatically organize y
 
 ---
 
-## ## Installation
+## Installation
 
 The easiest way to install Project Organizer is to download the latest installer from the official releases page.
 
@@ -16,7 +16,7 @@ The easiest way to install Project Organizer is to download the latest installer
 
 ---
 
-## ## Usage
+## Usage
 
 Once installed, the application will automatically start and run silently in the background. It will perform its sorting task every 5 minutes. There is no user interface; the program manages itself.
 
@@ -24,7 +24,7 @@ To stop the application, you will need to uninstall it from the Windows "Apps & 
 
 ---
 
-## ## Building from Source
+## Building from Source
 
 If you prefer to build the application from the source code, you will need the following tools:
 
@@ -57,6 +57,6 @@ Follow these steps:
 
 ---
 
-## ## License
+## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
