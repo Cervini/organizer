@@ -1,1 +1,5 @@
 __pycache__/utils.cpython-311.pyc
+build/*
+dist/*
+download-organizer-setup.exe
+setup.py

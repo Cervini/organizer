@@ -1,12 +1,10 @@
 import os
 import sys
+import shutil
 from typing import Optional
 import winreg
 
 def locate_folder_path() -> Optional[str]:
-    """
-    Finds the default Downloads folder path on the current operating system.
-    """
     if sys.platform == "win32": # Windows
         try:
             # Open the registry key that stores user shell folder paths
@@ -30,9 +28,35 @@ def filter_file_name(path) -> str:
     name = path.split("/")
     return name[-1]
 
-if __name__ == "__main__":
-    downloads_folder = locate_folder_path()
-    if downloads_folder:
-        print(f"The Downloads folder is located at: {downloads_folder}")
-    else:
-        print("Could not determine the Downloads folder path.")
+def file_sorter():
+    
+    # Locate Download directory
+    downloads_dir = locate_folder_path()
+
+    # Scan folder and check files 
+
+    # os.listdir() gives a list of every sub-directory and file name
+    for filename in os.listdir(downloads_dir):
+        # build file path
+        file_path = downloads_dir + '/' + filename
+        
+        # check if file
+        if os.path.isfile(file_path):
+            # get file name
+            # get extention
+            file_name, file_extension = os.path.splitext(file_path)
+            # sort from name
+            if "token" in file_name:
+                shutil.move(file_path, r"D:\Documents\D&D\Tokens")
+            # sort from exptension
+            elif file_extension in ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp']:
+                shutil.move(file_path, downloads_dir+'/'+"img/")
+            elif file_extension in ['.pdf', '.docx', '.doc', '.xlsx', '.xls', '.pptx', '.ppt', '.txt']:
+                shutil.move(file_path, downloads_dir+'/'+"docs/")
+            elif file_extension in ['.zip', '.rar', '.7z', '.gz']:
+                shutil.move(file_path, downloads_dir+'/'+"archives/")
+            elif file_extension in ['.exe', '.msi']:
+                shutil.move(file_path, downloads_dir+'/'+"installers/")
+            else:
+                # extension not classified
+                shutil.move(file_path, downloads_dir+'/'+"others/")
