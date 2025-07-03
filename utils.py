@@ -1,11 +1,7 @@
 import os
 import sys
-import pathlib
 from typing import Optional
-
-# Conditional import for the winreg module on Windows
-if sys.platform == "win32":
-    import winreg
+import winreg
 
 def locate_folder_path() -> Optional[str]:
     """
@@ -26,23 +22,6 @@ def locate_folder_path() -> Optional[str]:
         except Exception as e:
             print(f"Error occurred while reading the registry: {e}")
             return None
-            
-    elif sys.platform == "darwin":  # macOS
-        return os.path.join(os.path.expanduser('~'), 'Downloads')
-        
-    elif sys.platform.startswith("linux"): # Linux
-        try:
-            home = os.path.expanduser("~")
-            config = os.path.join(home, ".config/user-dirs.dirs")
-            if os.path.exists(config):
-                with open(config, 'r') as f:
-                    for line in f:
-                        if line.startswith("XDG_DOWNLOAD_DIR"):
-                            path = line.split('"')[1]
-                            return path.replace("$HOME", home)
-        except Exception:
-            return os.path.join(os.path.expanduser('~'), 'Downloads')
-
     else:
         print("Unsupported OS")
         return None

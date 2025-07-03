@@ -1,6 +1,6 @@
 import os
 import utils
-from pathlib import Path
+import shutil
 
 # Locate Download directory
 
@@ -10,8 +10,8 @@ downloads_dir = utils.locate_folder_path()
 
 # os.listdir() gives a list of every sub-directory and file name
 for filename in os.listdir(downloads_dir):
-    
-    file_path = downloads_dir + '/' + filename # see this
+    # build file path
+    file_path = downloads_dir + '/' + filename
     
     # check if file
     if os.path.isfile(file_path):
@@ -20,19 +20,13 @@ for filename in os.listdir(downloads_dir):
         file_name, file_extension = os.path.splitext(file_path)
 
         if file_extension in ['.jpg', '.jpeg', '.png', '.gif', '.bmp']:
-            print(f"  -> '{utils.filter_file_name(file_name)}' img")
-            
+            shutil.move(file_path, downloads_dir+'/'+"img/")
         elif file_extension in ['.pdf', '.docx', '.doc', '.xlsx', '.xls', '.pptx', '.ppt', '.txt']:
-            print(f"  -> '{utils.filter_file_name(file_name)}' doc")
-            
+            shutil.move(file_path, downloads_dir+'/'+"docs/")
         elif file_extension in ['.zip', '.rar', '.7z', '.gz']:
-            print(f"  -> '{utils.filter_file_name(file_name)}' archive")
-
+            shutil.move(file_path, downloads_dir+'/'+"archives/")
         elif file_extension in ['.exe', '.msi']:
-            print(f"  -> '{utils.filter_file_name(file_name)}' installer")
-            
+            shutil.move(file_path, downloads_dir+'/'+"installers/")
         else:
-            # Se non riconosciamo l'estensione, lo segnaliamo
-            print(f"  -> '{utils.filter_file_name(file_name)}' -> other")
-
-print("\n'Dry run' ended.")
+            # extension not classified
+            shutil.move(file_path, downloads_dir+'/'+"others/")
