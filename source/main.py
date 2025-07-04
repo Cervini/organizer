@@ -6,8 +6,10 @@ from PIL import Image
 import utils
 import sys
 import os
+import tkinter as tk
+from tkinter import scrolledtext
 
-def resource_path(relative_path):
+def root_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
     try:
         # PyInstaller creates a temp folder and stores path in _MEIPASS
@@ -34,9 +36,34 @@ def exit_action(icon, item):
     stop_event.set()
     icon.stop()
 
+def open_config_window_threaded():
+    # Run the window in its own thread
+    config_thread = threading.Thread(target=open_config_window)
+    config_thread.daemon = True
+    config_thread.start()
+
+def open_config_window():
+    config_window = tk.Tk()
+    config_window.title("Configure Rules")
+    config_window.resizable(True, True)
+    
+    # Add a Text widget to display the rules
+    text_area = scrolledtext.ScrolledText(config_window, wrap=tk.WORD, width=60, height=20)
+    text_area.pack(padx=10, pady=10, expand=True, fill='both')
+    
+    # Load and display the rules from config.yaml
+    try:
+        with open(root_path("source/config.yaml"), "r") as f:
+            rules_text = f.read()
+            text_area.insert(tk.INSERT, rules_text)
+    except FileNotFoundError:
+        text_area.insert(tk.INSERT, "Could not find config.yaml")
+        
+    config_window.mainloop()
+
 def main():
     # Use the robust function to find the image in the resources folder
-    image_path = resource_path("resources/broom.png")
+    image_path = root_path("resources/broom.png")
 
     try:
         image = Image.open(image_path)
@@ -44,8 +71,8 @@ def main():
         # if not found, create placeholder
         image = Image.new('RGB', (64, 64), 'black')
 
-    # link 'Exit' menu item to 'exit_action' function
-    menu = (item('Exit', exit_action),)
+    # link menu items to functions
+    menu = (item('Configure Rules', open_config_window_threaded), item('Exit', exit_action),)
 
     # create icon instance
     icon = pystray.Icon("Project Organizer", image, "Project Organizer", menu)

@@ -101,9 +101,9 @@ def file_sorter():
                 # check if destination folder exists
                 if not os.path.isdir(destination_folder):
                     continue
-
+                
                 # check if there is already a file with the same name in destination folder
-                if os.path.isfile(destination_folder+"/"+filter_file_name(file_name)+file_extension):
+                while os.path.isfile(destination_folder+"/"+filter_file_name(file_name)+file_extension):
                     # rename the new file
                     new_name = file_name+"_new"
                     os.rename(file_path, new_name+file_extension)
