@@ -62,7 +62,6 @@ def file_sorter():
     rules = load_config()
 
     if not rules:
-        print("Error: missing or invalig config")
         return
     # scan folder and check files 
 
@@ -97,15 +96,22 @@ def file_sorter():
                 else:
                     destination_folder = rule["destination"]
 
+                # check if destination folder exists
                 if not os.path.isdir(destination_folder):
-                    print(f"Error: missing or invalid destination")
                     continue
+
+                # check if there is already a file with the same name in destination folder
+                if os.path.isfile(destination_folder+"/"+filter_file_name(file_name)+file_extension):
+                    # rename the new file
+                    new_name = file_name+"_new"
+                    os.rename(file_path, new_name+file_extension)
+                    # update file path
+                    file_path = new_name+file_extension
                 
                 # Move the file
                 try:
-
                     shutil.move(file_path, destination_folder)
                     break # Stop checking rules for this file
                 except Exception as e:
-                    print(f"Error moving {file_path.name}: {e}")
+                    print(f"Error moving {file_path}: {e}")
                     break
