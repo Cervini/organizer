@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Download Organizer"
-#define MyAppVersion "1.1.0"
+#define MyAppVersion "1.1.1"
 #define MyAppPublisher "Simone Cervini"
 #define MyAppURL "https://github.com/Cervini/project_organizer"
 #define MyAppExeName "main.exe"
@@ -38,7 +38,7 @@ PrivilegesRequired=lowest
 OutputDir=D:\Documents\Personal projects\project_organizer
 OutputBaseFilename=download-organizer-setup
 SolidCompression=yes
-WizardStyle=modern
+WizardStyle=modern 
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -49,6 +49,8 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "D:\Documents\Personal projects\project_organizer\dist\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "source\config.yaml"; DestDir: "{app}"
+Source: "resources\broom.ico"; DestDir: "{app}"
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Registry]

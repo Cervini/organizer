@@ -5,7 +5,7 @@ a = Analysis(
     ['source\\main.py'],
     pathex=[],
     binaries=[],
-    datas=[],
+    datas=[('source/config.yaml', '.')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
@@ -35,4 +35,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+    icon=['resources\\broom.ico'],
 )
