@@ -24,7 +24,7 @@ def exit_action(icon, item):
 
 def main():
     try:
-        image = Image.open("resources/broom.ico")
+        image = Image.open("resources/broom.png")
     except FileNotFoundError:
         # if not found, create placeholder
         image = Image.new('RGB', (64, 64), 'black')
