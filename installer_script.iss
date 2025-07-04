@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Download Organizer"
-#define MyAppVersion "1.1.1"
+#define MyAppVersion "1.1.3"
 #define MyAppPublisher "Simone Cervini"
 #define MyAppURL "https://github.com/Cervini/project_organizer"
 #define MyAppExeName "main.exe"

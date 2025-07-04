@@ -7,6 +7,7 @@ import winreg
 import yaml
 
 def locate_folder_path() -> Optional[str]:
+    """ Returns Downloads folder path """
     if sys.platform == "win32": # Windows
         try:
             # Open the registry key that stores user shell folder paths
@@ -27,6 +28,7 @@ def locate_folder_path() -> Optional[str]:
         return None
     
 def filter_file_name(path) -> str:
+    """ Given a path returns only the file name """
     name = path.split("/")
     return name[-1]
 

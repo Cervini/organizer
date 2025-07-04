@@ -5,7 +5,7 @@ a = Analysis(
     ['source\\main.py'],
     pathex=[],
     binaries=[],
-    datas=[('source/config.yaml', '.')],
+    datas=[('resources', 'resources')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},

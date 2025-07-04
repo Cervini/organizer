@@ -4,11 +4,24 @@ from pystray import MenuItem as item
 import pystray
 from PIL import Image
 import utils
+import sys
+import os
+
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+
+    return os.path.join(base_path, relative_path)
 
 stop_event = threading.Event()
 
 # organize files after 5 minutes loop
 def organize_files_loop():
+    """ Run file sorter every 5 minutes"""
     while not stop_event.is_set():
         utils.file_sorter()
         for _ in range(300):
@@ -22,8 +35,11 @@ def exit_action(icon, item):
     icon.stop()
 
 def main():
+    # Use the robust function to find the image in the resources folder
+    image_path = resource_path("resources/broom.png")
+
     try:
-        image = Image.open("resources/broom.png")
+        image = Image.open(image_path)
     except FileNotFoundError:
         # if not found, create placeholder
         image = Image.new('RGB', (64, 64), 'black')
