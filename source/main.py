@@ -4,20 +4,8 @@ from pystray import MenuItem as item
 import pystray
 from PIL import Image
 import utils
-import sys
-import os
 import tkinter as tk
 from tkinter import ttk
-
-def root_path(relative_path):
-    """ Get absolute path to resource, works for dev and for PyInstaller """
-    try:
-        # PyInstaller creates a temp folder and stores path in _MEIPASS
-        base_path = sys._MEIPASS
-    except Exception:
-        base_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-
-    return os.path.join(base_path, relative_path)
 
 stop_event = threading.Event()
 
@@ -114,6 +102,16 @@ def open_config_window():
             ttk.Label(rule_frame, text="Destination:", ).grid(row=2, column=0, sticky="w", pady=2)
             ttk.Label(rule_frame, text=rule.get('destination', 'N/A')).grid(row=2, column=1, sticky="w")
 
+            # Edit and Delete Buttons
+            button_frame = ttk.Frame(rule_frame)
+            button_frame.grid(row=3, column=1, sticky="e", pady=5)
+
+            edit_button = ttk.Button(button_frame, text="Edit", command=lambda r=rule: open_edit_window(r, config_window))
+            edit_button.pack(side="left", padx=5)
+
+            delete_button = ttk.Button(button_frame, text="Delete", command=lambda r=rule: delete_rule(r, config_window))
+            delete_button.pack(side="left")
+
     else:
         ttk.Label(scrollable_frame, text="Could not load or find any rules in config.yaml.").pack(pady=20)
 
@@ -123,9 +121,18 @@ def open_config_window():
     config_window.protocol("WM_DELETE_WINDOW", on_closing)
     config_window.mainloop()
 
+def open_edit_window(rule, parent_window):
+    # This function would open a new window to edit the rule
+    print(f"Editing rule: {rule}")
+
+
+def delete_rule(rule, parent_window):
+    # This function will delete the rule
+    print(f"Deleting rule: {rule}")
+
 def main():
     # Use the robust function to find the image in the resources folder
-    image_path = root_path("resources/broom.png")
+    image_path = utils.root_path("resources/broom.png")
 
     try:
         image = Image.open(image_path)

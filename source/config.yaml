@@ -14,7 +14,7 @@
 
 rules:
   - name: "Images"
-    extensions: ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.ico']
+    extensions: ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.ico', '.svg']
     keywords: []
     sub: true
     destination: "imgs/"

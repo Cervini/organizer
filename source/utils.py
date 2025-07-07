@@ -6,6 +6,16 @@ from pathlib import Path
 import winreg
 import yaml
 
+def root_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+
+    return os.path.join(base_path, relative_path)
+
 def locate_folder_path() -> Optional[str]:
     """ Returns Downloads folder path """
     if sys.platform == "win32": # Windows
@@ -55,6 +65,35 @@ def load_config():
             print(f"Error parsing YAML file: {e}")
             return None
 
+def save_config(rules):
+    """Save the rules to the config.yaml file."""
+    config_file = root_path("source/config.yaml")
+    with open(config_file, "w") as f:
+        yaml.dump({"rules": rules}, f, default_flow_style=False)
+
+def update_rule(updated_rule):
+    """Update an existing rule in the config."""
+    rules = load_config()
+    if rules is not None:
+        for i, rule in enumerate(rules):
+            if rule.get("name") == updated_rule.get("name"):
+                rules[i] = updated_rule
+                save_config(rules)
+                return True
+    return False
+
+
+def delete_rule_from_config(rule_name):
+    """Delete a rule from the config by its name."""
+    rules = load_config()
+    if rules is not None:
+        original_len = len(rules)
+        rules = [rule for rule in rules if rule.get("name") != rule_name]
+        if len(rules) < original_len:
+            save_config(rules)
+            return True
+    return False
+
 def file_sorter():
 
     # locate Download directory
@@ -103,12 +142,15 @@ def file_sorter():
                     continue
                 
                 # check if there is already a file with the same name in destination folder
-                while os.path.isfile(destination_folder+"/"+filter_file_name(file_name)+file_extension):
+                count = 1
+                new_name = file_name
+                while os.path.isfile(destination_folder+"/"+filter_file_name(new_name)+file_extension):
                     # rename the new file
-                    new_name = file_name+"_new"
+                    new_name = file_name+"("+str(count)+")"
                     os.rename(file_path, new_name+file_extension)
                     # update file path
                     file_path = new_name+file_extension
+                    count += 1
                 
                 # Move the file
                 try:
