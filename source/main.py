@@ -7,7 +7,7 @@ import utils
 import sys
 import os
 import tkinter as tk
-from tkinter import scrolledtext
+from tkinter import ttk
 
 def root_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
@@ -43,22 +43,84 @@ def open_config_window_threaded():
     config_thread.start()
 
 def open_config_window():
+
+    # window settings
     config_window = tk.Tk()
     config_window.title("Configure Rules")
-    config_window.resizable(True, True)
+    w=600
+    h=500
+    ws=config_window.winfo_screenwidth()
+    hs=config_window.winfo_screenheight()
+    x=(ws/2)-(w/2)
+    y=(hs/2)-(h/2)
+    config_window.geometry('%dx%d+%d+%d'%(w,h,x,y))
+
+    # masin frame
+    main_frame = tk.Frame(config_window)
+    main_frame.pack(fill='both', expand=True)
     
-    # Add a Text widget to display the rules
-    text_area = scrolledtext.ScrolledText(config_window, wrap=tk.WORD, width=60, height=20)
-    text_area.pack(padx=10, pady=10, expand=True, fill='both')
+    # make window scrollable with mouse wheel
+    canvas = tk.Canvas(main_frame)
+    scrollbar = ttk.Scrollbar(main_frame, orient="vertical", command=canvas.yview)
+    scrollable_frame = ttk.Frame(canvas)
+
+    scrollable_frame.bind(
+        "<Configure>",
+        lambda e: canvas.configure(
+            scrollregion=canvas.bbox("all")
+        )
+    )
+
+    canvas_window = canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+    canvas.configure(yscrollcommand=scrollbar.set)
+
+    # --- Bind canvas resizing to frame resizing ---
+    def on_canvas_configure(event):
+        canvas.itemconfig(canvas_window, width=event.width)
     
-    # Load and display the rules from config.yaml
-    try:
-        with open(root_path("source/config.yaml"), "r") as f:
-            rules_text = f.read()
-            text_area.insert(tk.INSERT, rules_text)
-    except FileNotFoundError:
-        text_area.insert(tk.INSERT, "Could not find config.yaml")
-        
+    canvas.bind("<Configure>", on_canvas_configure)
+    # --- End resizing binding ---
+
+    # --- Mouse wheel scrolling ---
+    def on_mousewheel(event):
+        canvas.yview_scroll(int(-1*(event.delta/120)), "units")
+    
+    # Bind the mousewheel event to the canvas
+    canvas.bind_all("<MouseWheel>", on_mousewheel)
+    # --- End mouse wheel scrolling ---
+    
+    canvas.pack(side="left", fill="both", expand=True, padx=10, pady=10)
+    scrollbar.pack(side="right", fill="y")
+
+    # Load rules and display them
+    rules = utils.load_config()
+
+    if rules:
+        for _, rule in enumerate(rules):
+            rule_frame = ttk.LabelFrame(scrollable_frame, text=f"{rule.get('name', 'N/A')}", padding="10")
+            rule_frame.pack(pady=10, padx=10, fill="x", expand=True)
+            
+            # Extensions
+            ttk.Label(rule_frame, text="Extensions:").grid(row=0, column=0, sticky="w", pady=2)
+            ext_text = ", ".join(rule.get('extensions', [])) or "Any"
+            ttk.Label(rule_frame, text=ext_text, wraplength=350).grid(row=0, column=1, sticky="w")
+            
+            # Keywords
+            ttk.Label(rule_frame, text="Keywords:").grid(row=1, column=0, sticky="w", pady=2)
+            key_text = ", ".join(rule.get('keywords', [])) or "None"
+            ttk.Label(rule_frame, text=key_text, wraplength=350).grid(row=1, column=1, sticky="w")
+            
+            # Destination
+            ttk.Label(rule_frame, text="Destination:", ).grid(row=2, column=0, sticky="w", pady=2)
+            ttk.Label(rule_frame, text=rule.get('destination', 'N/A')).grid(row=2, column=1, sticky="w")
+
+    else:
+        ttk.Label(scrollable_frame, text="Could not load or find any rules in config.yaml.").pack(pady=20)
+
+    def on_closing():
+        config_window.destroy()
+
+    config_window.protocol("WM_DELETE_WINDOW", on_closing)
     config_window.mainloop()
 
 def main():
