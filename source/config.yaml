@@ -1,5 +1,5 @@
 rules:
-- destination: imgs/
+- destination: Images/
   extensions:
   - .jpg
   - .jpeg
@@ -12,23 +12,27 @@ rules:
   keywords: []
   name: Images
   sub: true
-- destination: docs/
+- destination: Installers/
+  extensions:
+  - .msi
+  - .exe
+  keywords: []
+  name: Installers
+  sub: true
+- destination: Archives/
+  extensions:
+  - .zip
+  - .rar
+  - .7z
+  - .gz
+  keywords: []
+  name: Archives
+  sub: true
+- destination: Documents
   extensions:
   - .pdf
   - .docx
-  - .doc
-  - .xlsx
-  - .xls
-  - .pptx
-  - .ppt
   - .txt
   keywords: []
   name: Documents
-  sub: true
-- destination: D:\Documents\D&D\Tokens
-  extensions:
-  - .png
-  keywords:
-  - token
-  name: Archives
   sub: true

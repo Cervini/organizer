@@ -38,12 +38,12 @@ def locate_folder_path() -> Optional[str]:
         return None
     
 def filter_file_name(path) -> str:
-    """ Given a path returns only the file name """
+    """Given a path returns only the file name"""
     name = path.split("/")
     return name[-1]
 
 def load_config():
-
+    """Returns the content of config.yaml"""
     # get the directory where the script is located
     script_dir = Path(__file__).resolve().parent
     
@@ -82,7 +82,6 @@ def update_rule(updated_rule):
                 return True
     return False
 
-
 def delete_rule_from_config(rule_name):
     """Delete a rule from the config by its name."""
     rules = load_config()
@@ -94,8 +93,15 @@ def delete_rule_from_config(rule_name):
             return True
     return False
 
-def file_sorter():
+def add_rule(new_rule):
+    """Appends a new rule to the config."""
+    rules = load_config()
+    if rules is not None:
+        rules.append(new_rule)
+        save_config(rules)
 
+def file_sorter():
+    """Reads all the files in the default Download directory and moves them following the rulers in config.yaml"""
     # locate Download directory
     downloads_dir = locate_folder_path()
 
@@ -159,3 +165,20 @@ def file_sorter():
                 except Exception as e:
                     print(f"Error moving {file_path}: {e}")
                     break
+       
+def create_folders():
+    """Create the deafult folders named in the default config.yaml"""
+    # locate Download directory
+    downloads_dir = locate_folder_path()
+    
+    types = ["Images", "Documents", "Installers", "Archives"]
+
+    for type in types:
+        directory = downloads_dir + '/' + type
+        try:
+            os.mkdir(directory)
+        except FileExistsError:
+            continue
+            #do nothing
+        except Exception as e:
+            print(f"An error occurred: {e}")

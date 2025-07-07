@@ -59,9 +59,11 @@ Follow these steps:
 
 ## Future implementations
 
- - [ ] Add rule
+ - [x] Add rule
  - [x] Edit rule
  - [x] Remove rule
+ - [ ] Better UI
+ - [ ] MacOS and Linux compatibility
 
 ---
 
