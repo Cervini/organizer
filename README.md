@@ -57,6 +57,14 @@ Follow these steps:
 
 ---
 
+## Future implementations
+
+ - [ ] Add rule
+ - [x] Edit rule
+ - [x] Remove rule
+
+---
+
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.

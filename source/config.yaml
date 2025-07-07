@@ -1,38 +1,34 @@
-# ---------------------------------------------------------------------------
-# Project Organizer Rules
-# ---------------------------------------------------------------------------
-# The script will check rules from top to bottom and move a file
-# based on the FIRST rule that matches.
-#
-# A rule matches if:
-#   - The file's extension is in the 'extensions' list.
-#   OR
-#   - Any of the 'keywords' are found in the filename.
-#
-# If no rules match, the file will be left in the Downloads folder.
-# ---------------------------------------------------------------------------
-
 rules:
-  - name: "Images"
-    extensions: ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.ico', '.svg']
-    keywords: []
-    sub: true
-    destination: "imgs/"
-
-  - name: "Documents"
-    extensions: ['.pdf', '.docx', '.doc', '.xlsx', '.xls', '.pptx', '.ppt', '.txt']
-    keywords: []
-    sub: true
-    destination: "docs/"
-
-  - name: "Installers"
-    extensions: [".msi", ".exe"]
-    keywords: []
-    sub: true
-    destination: "installers/"
-
-  - name: "Archives"
-    extensions: ['.zip', '.rar', '.7z', '.gz']
-    keywords: []
-    sub: true
-    destination: "archives/"
+- destination: imgs/
+  extensions:
+  - .jpg
+  - .jpeg
+  - .png
+  - .gif
+  - .bmp
+  - .webp
+  - .ico
+  - .svg
+  keywords: []
+  name: Images
+  sub: true
+- destination: docs/
+  extensions:
+  - .pdf
+  - .docx
+  - .doc
+  - .xlsx
+  - .xls
+  - .pptx
+  - .ppt
+  - .txt
+  keywords: []
+  name: Documents
+  sub: true
+- destination: D:\Documents\D&D\Tokens
+  extensions:
+  - .png
+  keywords:
+  - token
+  name: Archives
+  sub: true
