@@ -2,7 +2,18 @@
 
 ![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)
 
-A simple Windows utility that runs in the background to automatically organize your files every 5 minutes.
+A Windows utility that automatically organizes your Downloads folder every 5 minutes based on configurable rules. Features a system tray interface with a configuration GUI for managing file sorting rules.
+
+---
+
+## Features
+
+- **Automatic file organization**: Runs in the background and sorts files every 5 minutes
+- **System tray integration**: Clean, unobtrusive interface with easy access
+- **Configurable rules**: Create custom rules based on file extensions and keywords
+- **GUI configuration**: User-friendly interface for managing sorting rules
+- **Flexible destinations**: Sort files into subfolders within Downloads or absolute paths
+- **Smart file handling**: Automatically handles duplicate filenames
 
 ---
 
@@ -18,9 +29,30 @@ The easiest way to install Project Organizer is to download the latest installer
 
 ## Usage
 
-Once installed, the application will automatically start and run silently in the background. It will perform its sorting task every 5 minutes. There is no user interface; the program manages itself.
+Once installed, the application will automatically start and run silently in the background with a system tray icon.
 
-To stop the application, you will need to uninstall it from the Windows "Apps & features" settings.
+### System Tray Interface
+
+Right-click the system tray icon to access:
+- **Configure Rules**: Open the rule management window
+- **Exit**: Close the application
+
+### Managing Rules
+
+The configuration window allows you to:
+- **Add new rules**: Create custom sorting rules
+- **Edit existing rules**: Modify rule parameters
+- **Delete rules**: Remove unwanted rules
+- **Manual sorting**: Sort Downloads folder immediately
+- **Create default folders**: Set up common file type folders
+
+### Rule Configuration
+
+Each rule can specify:
+- **Extensions**: File types to match (e.g., `.pdf`, `.jpg`)
+- **Keywords**: Filename patterns to match
+- **Destination**: Where to move matching files
+- **Subfolder option**: Create destination as subfolder in Downloads
 
 ---
 
@@ -35,8 +67,8 @@ Follow these steps:
 
 1.  **Clone the repository:**
     ```bash
-    git clone [https://github.com/Cervini/project_organizer.git](https://github.com/Cervini/project_organizer.git)
-    cd project_organizer
+    git clone https://github.com/Cervini/organizer.git
+    cd organizer
     ```
 
 2.  **Install Python dependencies:**
@@ -57,10 +89,37 @@ Follow these steps:
 
 ---
 
-## Future implementations
+## Project Structure
 
- - [ ] Better UI
+```
+project_organizer/
+├── main.py          # Application entry point and system tray
+├── gui.py           # User interface components
+├── utils.py         # File operations and configuration management
+├── config.yaml      # Rule configuration file
+└── resources/       # Application resources (icons, etc.)
+```
+
+---
+
+## Default Configuration
+
+The application comes with default rules for common file types:
+- **Images**: `.jpg`, `.jpeg`, `.png`, `.gif`, `.bmp`, `.webp`, `.ico`, `.svg`
+- **Documents**: `.pdf`, `.docx`, `.txt`
+- **Installers**: `.msi`, `.exe`
+- **Archives**: `.zip`, `.rar`, `.7z`, `.gz`
+
+---
+
+## Future Implementations
+
+ - [ ] Better UI design
  - [ ] MacOS and Linux compatibility
+ - [ ] Custom sorting intervals
+ - [ ] Rule priority system
+ - [ ] Undo functionality
+ - [ ] File operation logging
 
 ---
 
