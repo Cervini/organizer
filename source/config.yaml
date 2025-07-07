@@ -36,3 +36,9 @@ rules:
   keywords: []
   name: Documents
   sub: true
+- destination: Test
+  extensions: []
+  keywords:
+  - test
+  name: Test
+  sub: true

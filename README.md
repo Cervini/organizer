@@ -59,9 +59,6 @@ Follow these steps:
 
 ## Future implementations
 
- - [x] Add rule
- - [x] Edit rule
- - [x] Remove rule
  - [ ] Better UI
  - [ ] MacOS and Linux compatibility
 
