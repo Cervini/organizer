@@ -1,5 +1,6 @@
 import tkinter as tk
-from tkinter import ttk
+import ttkbootstrap as ttk
+from ttkbootstrap.constants import *
 import threading
 import utils
 import sys
@@ -123,8 +124,8 @@ def create_rule_cards(parent_frame, rules):
     # Get the parent window from the frame
     config_window = parent_frame.winfo_toplevel()
     for rule in rules:
-        rule_frame = ttk.LabelFrame(parent_frame, text=f"{rule.get('name', 'N/A')}", padding="10")
-        rule_frame.pack(pady=5, padx=10, fill="x")
+        rule_frame = ttk.LabelFrame(parent_frame, text=f"{rule.get('name', 'N/A')}", padding="15", bootstyle="primary")
+        rule_frame.pack(pady=10, padx=10, fill="x")
 
         ttk.Label(rule_frame, text="Extensions:").grid(row=0, column=0, sticky="w", pady=2)
         ext_text = ", ".join(rule.get('extensions', [])) or "Any"
@@ -138,19 +139,21 @@ def create_rule_cards(parent_frame, rules):
         ttk.Label(rule_frame, text=rule.get('destination', 'N/A')).grid(row=2, column=1, sticky="w")
 
         button_frame = ttk.Frame(rule_frame)
-        button_frame.grid(row=3, column=1, sticky="e", pady=5)
+        button_frame.grid(row=3, column=1, sticky="e", pady=10)
 
         edit_button = ttk.Button(
             button_frame,
             text="Edit",
-            command=lambda r=rule: open_edit_window_threaded(r, config_window, parent_frame)
+            command=lambda r=rule: open_edit_window_threaded(r, config_window, parent_frame),
+            bootstyle="primary" # Solid primary color button
         )
         edit_button.pack(side="left")
 
         delete_button = ttk.Button(
             button_frame,
             text="Delete",
-            command=lambda r=rule: open_delete_window_threaded(r, config_window, parent_frame)
+            command=lambda r=rule: open_delete_window_threaded(r, config_window, parent_frame),
+            bootstyle="danger" # Red button for destructive actions
         )
         delete_button.pack(side="left")
 
@@ -178,10 +181,10 @@ def set_window_icon(window):
 
 def open_config_window():
     """Opens a window to see the rules applied"""
-    config_window = tk.Tk()
+    config_window = ttk.Window(themename="litera")
     set_window_icon(config_window)
     config_window.title("Configure Rules")
-    w, h = 650, 500
+    w, h = 800, 500
     ws, hs = config_window.winfo_screenwidth(), config_window.winfo_screenheight()
     x, y = (ws/2) - (w/2), (hs/2) - (h/2)
     config_window.geometry('%dx%d+%d+%d' % (w, h, x, y))
@@ -196,25 +199,28 @@ def open_config_window():
         top_frame,
         text="Add New Rule",
         # The command will call a new threaded function
-        command=lambda: open_add_window_threaded(config_window, scrollable_frame)
+        command=lambda: open_add_window_threaded(config_window, scrollable_frame),
+        bootstyle="success-outline" # Green outline button
     )
     add_button.pack(side="left")
     sort_button = ttk.Button(
         top_frame,
         text="Sort Downloads folder",
         # The command will sort Download folder
-        command=lambda: utils.file_sorter()
+        command=lambda: utils.file_sorter(),
+        bootstyle="info-outline"
     )
     sort_button.pack(side="left")
     create_default_folders_button = ttk.Button(
         top_frame,
         text="Create deafult folders",
-        command=lambda: utils.create_folders()
+        command=lambda: utils.create_folders(),
+        bootstyle="primary-outline" # Default outline button
     )
     create_default_folders_button.pack(side="left")
     interval_frame = ttk.Frame(top_frame)
     interval_frame.pack(side="left", padx=5)
-    ttk.Label(interval_frame, text="Sort Interval (minutes):").pack(side="left")
+    ttk.Label(interval_frame, text="Interval:").pack(side="left")
     interval_var = tk.StringVar(value=str(utils.get_interval()))
     interval_entry = ttk.Entry(interval_frame, textvariable=interval_var, width=5)
     interval_entry.pack(side="left", padx=(0, 5))
@@ -232,7 +238,8 @@ def open_config_window():
     apply_button = ttk.Button(
         interval_frame,
         text="Apply",
-        command=lambda: apply_interval(interval_var)
+        command=lambda: apply_interval(interval_var),
+        bootstyle="secondary" # A subtle button style
     )
     apply_button.pack(side="left")
 
@@ -295,7 +302,7 @@ def open_edit_window(rule, parent_window, frame_to_refresh):
     edit_window = tk.Toplevel(parent_window)
     set_window_icon(edit_window)
     edit_window.title("Edit "+ rule.get("name"))
-    w, h = 400, 250
+    w, h = 400, 400
     ws, hs = edit_window.winfo_screenwidth(), edit_window.winfo_screenheight()
     x, y = (ws/2) - (w/2), (hs/2) - (h/2)
     edit_window.geometry('%dx%d+%d+%d' % (w,h,x,y))
