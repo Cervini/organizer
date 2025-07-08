@@ -3,6 +3,74 @@ from tkinter import ttk
 import threading
 import utils
 
+# --- Drag and Drop State ---
+# Dictionary to hold information about the widget being dragged
+drag_data = {
+    "widget": None,
+    "start_x": 0,
+    "start_y": 0,
+}
+
+def on_drag_start(event, widget):
+    """Initiates the drag operation."""
+    # Record the widget being dragged and the initial mouse position
+    drag_data["widget"] = widget
+    drag_data["start_x"] = event.x_root
+    drag_data["start_y"] = event.y_root
+    # Lift the widget to the top of the stacking order
+    widget.lift()
+
+def on_drag_motion(event):
+    """Moves the widget with the mouse."""
+    if drag_data["widget"]:
+        # Calculate how much the mouse has moved
+        delta_x = event.x_root - drag_data["start_x"]
+        delta_y = event.y_root - drag_data["start_y"]
+        
+        # Get the initial position of the widget
+        x = drag_data["widget"].winfo_x()
+        y = drag_data["widget"].winfo_y()
+
+        # Calculate the new position
+        new_x = x + delta_x
+        new_y = y + delta_y
+        
+        # Move the widget
+        drag_data["widget"].place(x=new_x, y=new_y)
+
+        # Update the starting position for the next motion event
+        drag_data["start_x"] = event.x_root
+        drag_data["start_y"] = event.y_root
+
+def on_drag_end(event, frame):
+    """Finalizes the drag, reorders the rules, and refreshes the UI."""
+    if drag_data["widget"]:
+        # Get all rule frames and sort them by their current y-position
+        all_frames = [child for child in frame.winfo_children() if isinstance(child, ttk.LabelFrame)]
+        all_frames.sort(key=lambda w: w.winfo_y())
+        
+        # Get the original rules from the config
+        original_rules = utils.get_rules()
+        rules_by_name = {rule['name']: rule for rule in original_rules}
+        
+        # Create the new list of rules based on the sorted frames
+        new_rules_order = []
+        for f in all_frames:
+            rule_name = f.cget("text")
+            if rule_name in rules_by_name:
+                new_rules_order.append(rules_by_name[rule_name])
+
+        # Save the new order to the config file
+        config = utils.load_config()
+        config['rules'] = new_rules_order
+        utils.save_config(config)
+
+        # Reset the drag data
+        drag_data["widget"] = None
+        
+        # Refresh the entire list of rules to reflect the new order
+        refresh_rules_list(frame)
+
 
 def open_config_window_threaded():
     """Opens the main configuration window in a separate thread."""
@@ -61,7 +129,7 @@ def create_rule_cards(parent_frame, rules):
     config_window = parent_frame.winfo_toplevel()
     for rule in rules:
         rule_frame = ttk.LabelFrame(parent_frame, text=f"{rule.get('name', 'N/A')}", padding="10")
-        rule_frame.pack(pady=10, padx=10, fill="x", expand=True)
+        rule_frame.pack(pady=5, padx=10, fill="x")
 
         ttk.Label(rule_frame, text="Extensions:").grid(row=0, column=0, sticky="w", pady=2)
         ext_text = ", ".join(rule.get('extensions', [])) or "Any"
@@ -91,6 +159,22 @@ def create_rule_cards(parent_frame, rules):
         )
         delete_button.pack(side="left")
 
+        # --- Bindings for Drag and Drop ---
+        # Bind events to the main frame of the rule card
+        rule_frame.bind("<ButtonPress-1>", lambda e, w=rule_frame: on_drag_start(e, w))
+        rule_frame.bind("<B1-Motion>", on_drag_motion)
+        rule_frame.bind("<ButtonRelease-1>", lambda e, f=parent_frame: on_drag_end(e, f))
+
+        # Also bind the events to all children, so the drag can be initiated from anywhere inside the card
+        for child in rule_frame.winfo_children():
+            child.bind("<ButtonPress-1>", lambda e, w=rule_frame: on_drag_start(e, w))
+            child.bind("<B1-Motion>", on_drag_motion)
+            child.bind("<ButtonRelease-1>", lambda e, f=parent_frame: on_drag_end(e, f))
+            if isinstance(child, ttk.Frame): # for button frame
+                 for sub_child in child.winfo_children():
+                      sub_child.bind("<ButtonPress-1>", lambda e, w=rule_frame: on_drag_start(e, w))
+                      sub_child.bind("<B1-Motion>", on_drag_motion)
+                      sub_child.bind("<ButtonRelease-1>", lambda e, f=parent_frame: on_drag_end(e, f))
 
 def open_config_window():
     """Opens a window to see the rules applied"""
@@ -328,7 +412,7 @@ def open_add_window(parent_window, frame_to_refresh):
         rule_name = name_var.get().strip()
         if not rule_name:
             # Simple validation: prevent saving with no name
-            print("Error: Rule name cannot be empty.")
+            utils.logger.warning("Empty name, couldn't save")
             return
 
         extensions_list = [ext.strip() for ext in extensions_var.get().split(',') if ext.strip()]
