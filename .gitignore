@@ -25,6 +25,11 @@ env/
 .DS_Store
 Thumbs.db
 
+# logging files
+.log/
+log/
+*.log
+
 # specific files
 setup.py
 main.spec

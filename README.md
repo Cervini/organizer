@@ -118,7 +118,7 @@ The application comes with default rules for common file types:
  - [ ] Better UI design
  - [ ] MacOS and Linux compatibility
  - [ ] Rule priority system
- - [ ] File operation logging
+ - [x] File operation logging
 
 ---
 

@@ -10,11 +10,15 @@ stop_event = threading.Event()
 
 # -- Core application logic --
 def organize_files_loop():
-    """ Run file sorter every 5 minutes"""
+    """ Run file sorter every set amount of time read from config file"""
     while not stop_event.is_set():
         utils.file_sorter()
-        for _ in range(300):
+        interval = utils.get_interval()*60
+        for _ in range(interval*60):
             if stop_event.is_set():
+                break
+            if utils.get_interval()*60 != interval:
+                utils.logger.info(f"Time interval updated, set to {utils.get_interval()}.")
                 break
             # waiting 1 second at a times allows to promptly stop the loop
             time.sleep(1)
@@ -25,6 +29,8 @@ def exit_action(icon, item):
 
 # -- Main --
 def main():
+    utils.setup_logging()
+
     # Use the robust function to find the image in the resources folder
     image_path = utils.root_path("resources/broom.png")
 
@@ -32,6 +38,7 @@ def main():
         image = Image.open(image_path)
     except FileNotFoundError:
         # if not found, create placeholder
+        utils.logger.warning(f"Icon file not found at {image_path}. Using placeholder.")
         image = Image.new('RGB', (64, 64), 'black')
 
     # link menu items to functions

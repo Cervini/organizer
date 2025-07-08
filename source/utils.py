@@ -2,9 +2,12 @@ import os
 import sys
 import shutil
 from typing import Optional
-from pathlib import Path
 import winreg
 import yaml
+import logging
+from logging.handlers import RotatingFileHandler
+
+logger = logging.getLogger("OrganizerLogger")
 
 def root_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
@@ -15,6 +18,28 @@ def root_path(relative_path):
         base_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
     return os.path.join(base_path, relative_path)
+
+def setup_logging():
+    """Sets up a rotating log file."""
+    log_file = root_path("organizer.log")
+    
+    # Create a logger
+    logger = logging.getLogger("OrganizerLogger")
+    logger.setLevel(logging.INFO)
+    
+    # Create a rotating file handler
+    # This will create a new log file when the current one reaches 5MB, and it will keep up to 5 old log files.
+    handler = RotatingFileHandler(log_file, maxBytes=5*1024*1024, backupCount=5)
+    
+    # Create a formatter and set it for the handler
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    
+    # Add the handler to the logger
+    if not logger.handlers:
+        logger.addHandler(handler)
+        
+    return logger
 
 def locate_folder_path() -> Optional[str]:
     """ Returns Downloads folder path """
@@ -31,10 +56,10 @@ def locate_folder_path() -> Optional[str]:
             # Fallback in case the registry key is not found
             return os.path.join(os.path.expanduser('~'), 'Downloads')
         except Exception as e:
-            print(f"Error occurred while reading the registry: {e}")
+            logger.exception(f"Error occurred while reading the registry: {e}")
             return None
     else:
-        print("Unsupported OS")
+        logger.error(f"Unsupported OS")
         return None
     
 def filter_file_name(path) -> str:
@@ -48,14 +73,14 @@ def load_config():
     config_file = root_path("source/config.yaml")
 
     if not os.path.exists(config_file):
-        print(f"Error: '{config_file}' not found. Please create it.")
+        logger.error(f"'{config_file}' not found. Please create it.")
         return None
     with open(config_file, "r") as f:
         try:
             config = yaml.safe_load(f)
             return config
         except yaml.YAMLError as e:
-            print(f"Error parsing YAML file: {e}")
+            logger.error(f"Error parsing YAML file: {e}")
             return None
 
 def get_rules():
@@ -64,7 +89,7 @@ def get_rules():
     if config and "rules" in config and isinstance(config["rules"], list):
         return config["rules"]
     else:
-        print(f"Error: config.yaml is missing the 'rules' list.")
+        logger.error(f"Error: config.yaml is missing the 'rules' list.")
         return None
 
 def get_interval():
@@ -81,6 +106,7 @@ def save_interval(interval_minutes):
     config_file = root_path("source/config.yaml")
     with open(config_file, "w") as f:
         yaml.dump(config, f, default_flow_style=False)
+        logger.info("Interval updated in config.yaml")
 
 def save_config(config):
     """Save the config to the config.yaml file."""
@@ -98,6 +124,7 @@ def update_rule(updated_rule):
                 rules[i] = updated_rule
                 config["rules"] = rules
                 save_config(config)
+                logger.info(f"{rule.get("name")} rule updated")
                 return True
     return False
 
@@ -111,6 +138,7 @@ def delete_rule_from_config(rule_name):
         if len(rules) < original_len:
             config["rules"] = rules
             save_config(config)
+            logger.info(f"{rule_name} rule deleted")
             return True
     return False
 
@@ -122,6 +150,7 @@ def add_rule(new_rule):
         rules.append(new_rule)
         config["rules"] = rules
         save_config(config)
+        logger.info(f"Added {new_rule} rule to config.yaml")
 
 def file_sorter():
     """Reads all the files in the default Download directory and moves them following the rulers in config.yaml"""
@@ -175,6 +204,7 @@ def file_sorter():
                 new_name = file_name
                 while os.path.isfile(destination_folder+"/"+filter_file_name(new_name)+file_extension):
                     # rename the new file
+                    logger.info(f"File with name {filter_file_name(new_name)+file_extension} already exists in target directory, renaming.")
                     new_name = file_name+"("+str(count)+")"
                     os.rename(file_path, new_name+file_extension)
                     # update file path
@@ -184,9 +214,10 @@ def file_sorter():
                 # Move the file
                 try:
                     shutil.move(file_path, destination_folder)
+                    logger.info(f"Moved {filter_file_name(file_path)} to {destination_folder}.")
                     break # Stop checking rules for this file
                 except Exception as e:
-                    print(f"Error moving {file_path}: {e}")
+                    logger.exception(f"Error moving {file_path}.")
                     break
        
 def create_folders():
@@ -200,8 +231,9 @@ def create_folders():
         directory = downloads_dir + '/' + type
         try:
             os.mkdir(directory)
+            logger.info(f"{type} directory created.")
         except FileExistsError:
-            continue
-            #do nothing
+            logger.warning(f"Couldn't create {type} directory because it already existed.")
+            continue # if the directory already exists do nothing
         except Exception as e:
-            print(f"An error occurred: {e}")
+            logger.exception(f"An error occurred while trying to create {type} directory.")
