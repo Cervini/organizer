@@ -99,6 +99,7 @@ organizer/
 │   ├── utils.py         # File operations and configuration management
 │   └── config.yaml      # Rule configuration file
 └── resources  # Application resources (icons, etc.)
+```
 
 ---
 
