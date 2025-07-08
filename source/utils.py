@@ -19,22 +19,33 @@ def root_path(relative_path):
 
     return os.path.join(base_path, relative_path)
 
+def appdata_path():
+    """Returns the path to the user's AppData/Roaming directory."""
+    if sys.platform == "win32":
+        return os.getenv('APPDATA')
+    else:
+        # For macOS and Linux, a common practice is to use a hidden folder in the home directory.
+        return os.path.join(os.path.expanduser('~'), '.project_organizer')
+
 def setup_logging():
-    """Sets up a rotating log file."""
-    log_file = root_path("organizer.log")
-    
+    """Sets up a rotating log file in the AppData directory."""
+    appdata = appdata_path()
+    log_dir = os.path.join(appdata, "ProjectOrganizer")
+    if not os.path.exists(log_dir):
+        os.makedirs(log_dir)
+    log_file = os.path.join(log_dir, "organizer.log")
+
     # Create a logger
     logger = logging.getLogger("OrganizerLogger")
     logger.setLevel(logging.INFO)
-    
+
     # Create a rotating file handler
-    # This will create a new log file when the current one reaches 5MB, and it will keep up to 5 old log files.
     handler = RotatingFileHandler(log_file, maxBytes=5*1024*1024, backupCount=5)
-    
+
     # Create a formatter and set it for the handler
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     handler.setFormatter(formatter)
-    
+
     # Add the handler to the logger
     if not logger.handlers:
         logger.addHandler(handler)
