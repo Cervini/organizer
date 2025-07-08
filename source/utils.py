@@ -45,10 +45,7 @@ def filter_file_name(path) -> str:
 def load_config():
     """Returns the content of config.yaml"""
     # get the directory where the script is located
-    script_dir = Path(__file__).resolve().parent
-    
-    # build the full, absolute path to the config file
-    config_file = script_dir / "config.yaml"
+    config_file = root_path("source/config.yaml")
 
     if not os.path.exists(config_file):
         print(f"Error: '{config_file}' not found. Please create it.")
