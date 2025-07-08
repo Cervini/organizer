@@ -69,9 +69,8 @@ def locate_folder_path() -> Optional[str]:
         except Exception as e:
             logger.exception(f"Error occurred while reading the registry: {e}")
             return None
-    else:
-        logger.error(f"Unsupported OS")
-        return None
+    else: # macOS and Linux
+        return os.path.join(os.path.expanduser('~'), 'Downloads')
     
 def filter_file_name(path) -> str:
     """Given a path returns only the file name"""

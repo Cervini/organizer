@@ -2,7 +2,7 @@
 
 ![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)
 
-A Windows utility that automatically organizes your Downloads folder every 5 minutes based on configurable rules. Features a system tray interface with a configuration GUI for managing file sorting rules.
+A Windows utility that automatically organizes your Downloads folder based on configurable rules. Features a system tray interface with a configuration GUI for managing file sorting rules.
 
 ---
 
@@ -72,17 +72,28 @@ Follow these steps:
     ```
 
 2.  **Install Python dependencies:**
-    ```bash
-    pip install -r requirements.txt
-    ```
+
+    * **On Windows:**
+        ```bash
+        pip install -r requirements.txt
+        ```
+    * **On macOS and Linux:**
+        First, we need to remove the Windows-specific dependency, then install the rest.
+        ```bash
+        sed '/pywin32-ctypes/d' requirements.txt | pip install -r /dev/stdin
+        ```
+        You may also need to install additional system libraries for the system tray icon to work.
+        * **On Debian/Ubuntu:** `sudo apt-get install python3-gi gir1.2-gtk-3.0`
+        * **On Fedora:** `sudo dnf install python3-gobject gtk3`
+        * **On Arch Linux:** `sudo pacman -S python-gobject gtk3`
 
 3.  **Bundle the app with PyInstaller:**
     ```bash
     pyinstaller --windowed --onefile main.py
     ```
-    This will create a `main.exe` file inside a new `dist` folder.
+    This will create an executable file inside a new `dist` folder.
 
-4.  **Create the installer with Inno Setup:**
+4.  **(Windows Only) Create the installer with Inno Setup:**
     * Open the `installer_script.iss` file with Inno Setup.
     * From the Inno Setup menu, click `Build` > `Compile`.
     * The final `setup.exe` installer will be in the `Output` folder.
@@ -93,7 +104,7 @@ Follow these steps:
 
 ```
 organizer/
-├── sources              # Application sources (code, configuration files, etc.)
+├── sources              # Application code
 │   ├── main.py          # Application entry point and system tray
 │   ├── gui.py           # User interface components
 │   └── utils.py         # File operations and configuration management
