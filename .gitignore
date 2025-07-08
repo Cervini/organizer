@@ -24,3 +24,7 @@ env/
 # OS-specific files
 .DS_Store
 Thumbs.db
+
+# specific files
+setup.py
+main.spec
