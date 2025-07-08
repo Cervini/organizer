@@ -1,6 +1,6 @@
 interval: 1
 rules:
-- destination: Images/
+- destination: Images\
   extensions:
   - .jpg
   - .jpeg
@@ -13,14 +13,14 @@ rules:
   keywords: []
   name: Images
   sub: true
-- destination: Installers/
+- destination: Installers\
   extensions:
   - .msi
   - .exe
   keywords: []
   name: Installers
   sub: true
-- destination: Archives/
+- destination: Archives\
   extensions:
   - .zip
   - .rar
@@ -29,7 +29,7 @@ rules:
   keywords: []
   name: Archives
   sub: true
-- destination: Documents
+- destination: Documents\
   extensions:
   - .pdf
   - .docx

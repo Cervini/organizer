@@ -162,6 +162,10 @@ def add_rule(new_rule):
         save_config(config)
         logger.info(f"Added {new_rule} rule to config.yaml")
 
+def filter_file_name(path) -> str:
+    name = path.split(f"\\")
+    return name[-1]
+
 def file_sorter():
     """Reads all the files in the default Download directory and moves them following the rulers in config.yaml"""
     # locate Download directory
@@ -198,13 +202,11 @@ def file_sorter():
                 match_keyword = any(keyword.lower() in file_name for keyword in rule["keywords"])
 
             if match_extension or match_keyword:
-
                 # check if destination is sub-folder
                 if rule["sub"]:
                     destination_folder = os.path.join(downloads_dir, rule["destination"])
                 else:
                     destination_folder = rule["destination"]
-
                 # check if destination folder exists
                 if not os.path.isdir(destination_folder):
                     continue
@@ -214,13 +216,13 @@ def file_sorter():
                 new_name = file_name
                 while os.path.isfile(os.path.join(destination_folder,filter_file_name(new_name)+file_extension)):
                     # rename the new file
-                    logger.info(f"File with name {filter_file_name(new_name)+file_extension} already exists in target directory, renaming.")
                     new_name = file_name+"("+str(count)+")"
                     os.rename(file_path, new_name+file_extension)
                     # update file path
                     file_path = new_name+file_extension
                     count += 1
                 
+
                 # Move the file
                 try:
                     shutil.move(file_path, destination_folder)
