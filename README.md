@@ -8,7 +8,7 @@ A Windows utility that automatically organizes your Downloads folder every 5 min
 
 ## Features
 
-- **Automatic file organization**: Runs in the background and sorts files every 5 minutes
+- **Automatic file organization**: Runs in the background and sorts files after a customizable interval of time
 - **System tray integration**: Clean, unobtrusive interface with easy access
 - **Configurable rules**: Create custom rules based on file extensions and keywords
 - **GUI configuration**: User-friendly interface for managing sorting rules
