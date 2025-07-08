@@ -56,49 +56,75 @@ def load_config():
     with open(config_file, "r") as f:
         try:
             config = yaml.safe_load(f)
-            if "rules" in config and isinstance(config["rules"], list):
-                return config["rules"]
-            else:
-                print(f"Error: '{config_file}' is missing the 'rules' list.")
-                return None
+            return config
         except yaml.YAMLError as e:
             print(f"Error parsing YAML file: {e}")
             return None
 
-def save_config(rules):
-    """Save the rules to the config.yaml file."""
+def get_rules():
+    """Returns just the rules from the config."""
+    config = load_config()
+    if config and "rules" in config and isinstance(config["rules"], list):
+        return config["rules"]
+    else:
+        print(f"Error: config.yaml is missing the 'rules' list.")
+        return None
+
+def get_interval():
+    """Returns the sorting interval in minutes from the config."""
+    config = load_config()
+    return config.get("interval", 5) if config else 5
+
+def save_interval(interval_minutes):
+    """Saves the sorting interval to the config.yaml file."""
+    config = load_config()
+    if config is None:
+        config = {'rules': [], 'interval': 5}
+    config["interval"] = interval_minutes
     config_file = root_path("source/config.yaml")
     with open(config_file, "w") as f:
-        yaml.dump({"rules": rules}, f, default_flow_style=False)
+        yaml.dump(config, f, default_flow_style=False)
+
+def save_config(config):
+    """Save the config to the config.yaml file."""
+    config_file = root_path("source/config.yaml")
+    with open(config_file, "w") as f:
+        yaml.dump(config, f, default_flow_style=False)
 
 def update_rule(updated_rule):
     """Update an existing rule in the config."""
-    rules = load_config()
-    if rules is not None:
+    config = load_config()
+    if config is not None:
+        rules = config.get("rules", [])
         for i, rule in enumerate(rules):
             if rule.get("name") == updated_rule.get("name"):
                 rules[i] = updated_rule
-                save_config(rules)
+                config["rules"] = rules
+                save_config(config)
                 return True
     return False
 
 def delete_rule_from_config(rule_name):
     """Delete a rule from the config by its name."""
-    rules = load_config()
-    if rules is not None:
+    config = load_config()
+    if config is not None:
+        rules = config.get("rules", [])
         original_len = len(rules)
         rules = [rule for rule in rules if rule.get("name") != rule_name]
         if len(rules) < original_len:
-            save_config(rules)
+            config["rules"] = rules
+            save_config(config)
             return True
     return False
 
 def add_rule(new_rule):
     """Appends a new rule to the config."""
-    rules = load_config()
-    if rules is not None:
+    config = load_config()
+    if config is not None:
+        rules = config.get("rules", [])
         rules.append(new_rule)
-        save_config(rules)
+        config["rules"] = rules
+        save_config(config)
 
 def file_sorter():
     """Reads all the files in the default Download directory and moves them following the rulers in config.yaml"""
@@ -106,7 +132,7 @@ def file_sorter():
     downloads_dir = locate_folder_path()
 
     # load sorting rules
-    rules = load_config()
+    rules = get_rules()
 
     if not rules:
         return
@@ -170,7 +196,7 @@ def create_folders():
     """Create the deafult folders named in the default config.yaml"""
     # locate Download directory
     downloads_dir = locate_folder_path()
-    
+
     types = ["Images", "Documents", "Installers", "Archives"]
 
     for type in types:

@@ -1,3 +1,4 @@
+interval: 1
 rules:
 - destination: Images/
   extensions:

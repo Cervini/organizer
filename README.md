@@ -92,13 +92,13 @@ Follow these steps:
 ## Project Structure
 
 ```
-project_organizer/
-├── main.py          # Application entry point and system tray
-├── gui.py           # User interface components
-├── utils.py         # File operations and configuration management
-├── config.yaml      # Rule configuration file
-└── resources/       # Application resources (icons, etc.)
-```
+organizer/
+├── sources     # Application sources (code, configuration files, etc.)
+│   ├── main.py          # Application entry point and system tray
+│   ├── gui.py           # User interface components
+│   ├── utils.py         # File operations and configuration management
+│   └── config.yaml      # Rule configuration file
+└── resources  # Application resources (icons, etc.)
 
 ---
 
@@ -116,9 +116,7 @@ The application comes with default rules for common file types:
 
  - [ ] Better UI design
  - [ ] MacOS and Linux compatibility
- - [ ] Custom sorting intervals
  - [ ] Rule priority system
- - [ ] Undo functionality
  - [ ] File operation logging
 
 ---

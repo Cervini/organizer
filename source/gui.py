@@ -48,7 +48,7 @@ def refresh_rules_list(frame):
         widget.destroy()
 
     # Reload the rules and rebuild the UI
-    rules = utils.load_config()
+    rules = utils.get_rules()
     if rules:
         create_rule_cards(frame, rules) # Use the refactored card creation logic
     else:
@@ -96,7 +96,7 @@ def open_config_window():
     """Opens a window to see the rules applied"""
     config_window = tk.Tk()
     config_window.title("Configure Rules")
-    w, h = 600, 500
+    w, h = 650, 500
     ws, hs = config_window.winfo_screenwidth(), config_window.winfo_screenheight()
     x, y = (ws/2) - (w/2), (hs/2) - (h/2)
     config_window.geometry('%dx%d+%d+%d' % (w, h, x, y))
@@ -127,6 +127,29 @@ def open_config_window():
         command=lambda: utils.create_folders()
     )
     create_default_folders_button.pack(side="left")
+    interval_frame = ttk.Frame(top_frame)
+    interval_frame.pack(side="left", padx=5)
+    ttk.Label(interval_frame, text="Sort Interval (minutes):").pack(side="left")
+    interval_var = tk.StringVar(value=str(utils.get_interval()))
+    interval_entry = ttk.Entry(interval_frame, textvariable=interval_var, width=5)
+    interval_entry.pack(side="left", padx=(0, 5))
+
+    def apply_interval(var_to_use):
+        try:
+            new_interval = int(var_to_use.get())
+            if new_interval > 0:
+                utils.save_interval(new_interval)
+            else:
+                print("Interval must be a positive number.")
+        except ValueError:
+            print("Invalid interval. Please enter a number.")
+            
+    apply_button = ttk.Button(
+        interval_frame,
+        text="Apply",
+        command=lambda: apply_interval(interval_var)
+    )
+    apply_button.pack(side="left")
 
     canvas = tk.Canvas(main_frame)
     scrollbar = ttk.Scrollbar(main_frame, orient="vertical", command=canvas.yview)
@@ -141,7 +164,7 @@ def open_config_window():
     canvas.pack(side="left", fill="both", expand=True, padx=10, pady=10)
     scrollbar.pack(side="right", fill="y")
 
-    rules = utils.load_config()
+    rules = utils.get_rules()
     if rules:
         # Initial creation of rule cards
         create_rule_cards(scrollable_frame, rules)
