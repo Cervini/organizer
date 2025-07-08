@@ -1,4 +1,4 @@
-interval: 1
+interval: 2
 rules:
 - destination: Images/
   extensions:
@@ -36,10 +36,4 @@ rules:
   - .txt
   keywords: []
   name: Documents
-  sub: true
-- destination: Test
-  extensions: []
-  keywords:
-  - test
-  name: Test
   sub: true

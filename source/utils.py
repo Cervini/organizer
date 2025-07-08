@@ -25,12 +25,12 @@ def appdata_path():
         return os.getenv('APPDATA')
     else:
         # For macOS and Linux, a common practice is to use a hidden folder in the home directory.
-        return os.path.join(os.path.expanduser('~'), '.project_organizer')
+        return os.path.join(os.path.expanduser('~'), '.organizer')
 
 def setup_logging():
     """Sets up a rotating log file in the AppData directory."""
     appdata = appdata_path()
-    log_dir = os.path.join(appdata, "ProjectOrganizer")
+    log_dir = os.path.join(appdata, "Organizer")
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
     log_file = os.path.join(log_dir, "organizer.log")
@@ -81,7 +81,7 @@ def filter_file_name(path) -> str:
 def load_config():
     """Returns the content of config.yaml"""
     # get the directory where the script is located
-    config_file = root_path("source/config.yaml")
+    config_file = root_path(os.path.join('resources', 'config.yaml'))
 
     if not os.path.exists(config_file):
         logger.error(f"'{config_file}' not found. Please create it.")
@@ -114,14 +114,14 @@ def save_interval(interval_minutes):
     if config is None:
         config = {'rules': [], 'interval': 5}
     config["interval"] = interval_minutes
-    config_file = root_path("source/config.yaml")
+    config_file = root_path("resources/config.yaml")
     with open(config_file, "w") as f:
         yaml.dump(config, f, default_flow_style=False)
         logger.info("Interval updated in config.yaml")
 
 def save_config(config):
     """Save the config to the config.yaml file."""
-    config_file = root_path("source/config.yaml")
+    config_file = root_path("resources/config.yaml")
     with open(config_file, "w") as f:
         yaml.dump(config, f, default_flow_style=False)
 

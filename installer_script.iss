@@ -49,7 +49,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "D:\Documents\Personal projects\project_organizer\dist\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "source\config.yaml"; DestDir: "{app}"
+Source: "resources\config.yaml"; DestDir: "{app}"
 Source: "resources\broom.ico"; DestDir: "{app}"
 Source: "resources\broom.png"; DestDir: "{app}"
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files

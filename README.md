@@ -1,4 +1,4 @@
-# Project Organizer
+# Download Organizer
 
 ![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)
 
@@ -93,12 +93,11 @@ Follow these steps:
 
 ```
 organizer/
-├── sources     # Application sources (code, configuration files, etc.)
+├── sources              # Application sources (code, configuration files, etc.)
 │   ├── main.py          # Application entry point and system tray
 │   ├── gui.py           # User interface components
 │   ├── utils.py         # File operations and configuration management
-│   └── config.yaml      # Rule configuration file
-└── resources  # Application resources (icons, etc.)
+└── resources            # Application resources (icons, etc.)
 ```
 
 ---

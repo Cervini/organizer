@@ -45,7 +45,7 @@ def main():
     menu = (item('Configure Rules', gui.open_config_window_threaded), item('Exit', exit_action),)
 
     # create icon instance
-    icon = pystray.Icon("Project Organizer", image, "Project Organizer", menu)
+    icon = pystray.Icon("Organizer", image, "Organizer", menu)
 
     # Create and start background thread for organization logic
     organization_thread = threading.Thread(target=organize_files_loop)
