@@ -4,3 +4,4 @@ dist/*
 download-organizer-setup.exe
 setup.py
 source/__pycache__
+LICENSE
