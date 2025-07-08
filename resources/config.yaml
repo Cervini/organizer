@@ -1,4 +1,4 @@
-interval: 2
+interval: 1
 rules:
 - destination: Images/
   extensions:

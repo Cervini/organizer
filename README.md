@@ -96,8 +96,9 @@ organizer/
 ├── sources              # Application sources (code, configuration files, etc.)
 │   ├── main.py          # Application entry point and system tray
 │   ├── gui.py           # User interface components
-│   ├── utils.py         # File operations and configuration management
+│   └── utils.py         # File operations and configuration management
 └── resources            # Application resources (icons, etc.)
+    └── config.yaml      # Rule configurations
 ```
 
 ---

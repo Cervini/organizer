@@ -178,7 +178,7 @@ def file_sorter():
     # os.listdir() gives a list of every sub-directory and file name
     for filename in os.listdir(downloads_dir):
         # build file path
-        file_path = downloads_dir + '/' + filename
+        file_path = os.path.join(downloads_dir, filename)
         
         # check if file
         if not os.path.isfile(file_path):
@@ -202,7 +202,7 @@ def file_sorter():
 
                 # check if destination is sub-folder
                 if rule["sub"]:
-                    destination_folder = downloads_dir + "/" + rule["destination"]
+                    destination_folder = os.path.join(downloads_dir, rule["destination"])
                 else:
                     destination_folder = rule["destination"]
 
@@ -213,7 +213,7 @@ def file_sorter():
                 # check if there is already a file with the same name in destination folder
                 count = 1
                 new_name = file_name
-                while os.path.isfile(destination_folder+"/"+filter_file_name(new_name)+file_extension):
+                while os.path.isfile(os.path.join(destination_folder,filter_file_name(new_name)+file_extension)):
                     # rename the new file
                     logger.info(f"File with name {filter_file_name(new_name)+file_extension} already exists in target directory, renaming.")
                     new_name = file_name+"("+str(count)+")"
@@ -239,7 +239,7 @@ def create_folders():
     types = ["Images", "Documents", "Installers", "Archives"]
 
     for type in types:
-        directory = downloads_dir + '/' + type
+        directory = os.path.join(downloads_dir, type)
         try:
             os.mkdir(directory)
             logger.info(f"{type} directory created.")
