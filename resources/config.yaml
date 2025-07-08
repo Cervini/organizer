@@ -13,13 +13,6 @@ rules:
   keywords: []
   name: Images
   sub: true
-- destination: Installers\
-  extensions:
-  - .msi
-  - .exe
-  keywords: []
-  name: Installers
-  sub: true
 - destination: Archives\
   extensions:
   - .zip
@@ -36,4 +29,11 @@ rules:
   - .txt
   keywords: []
   name: Documents
+  sub: true
+- destination: Installers\
+  extensions:
+  - .msi
+  - .exe
+  keywords: []
+  name: Installers
   sub: true
