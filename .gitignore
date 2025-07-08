@@ -1,7 +1,26 @@
-__pycache__/utils.cpython-311.pyc
-build/*
-dist/*
-download-organizer-setup.exe
-setup.py
-source/__pycache__
-LICENSE
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Build artifacts
+build/
+dist/
+Output/
+*.exe
+*.spec
+
+# Virtual environment
+venv/
+.venv/
+env/
+.env
+
+# IDE and editor directories
+.vscode/
+.idea/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
