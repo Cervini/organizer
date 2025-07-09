@@ -124,15 +124,6 @@ The application comes with default rules for common file types:
 
 ---
 
-## Future Implementations
-
- - [ ] Better UI design
- - [x] MacOS and Linux compatibility
- - [x] Rule priority system
- - [x] File operation logging
-
----
-
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
