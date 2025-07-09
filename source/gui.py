@@ -152,6 +152,7 @@ def create_rule_cards(parent_frame, rules):
             child.bind("<ButtonRelease-1>", lambda e, f=parent_frame: on_drag_end(e, f))
 
 def set_window_icon(window):
+    """Sets the broom icon to the window based on the OS"""
     if sys.platform == "win32":
         window.iconbitmap(utils.root_path("resources/broom.ico"))
     elif sys.platform == "darwin":

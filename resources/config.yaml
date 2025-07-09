@@ -17,6 +17,13 @@ rules:
   keywords: []
   name: Archives
   sub: true
+- destination: Installers\
+  extensions:
+  - .msi
+  - .exe
+  keywords: []
+  name: Installers
+  sub: true
 - destination: Images\
   extensions:
   - .jpg
@@ -29,11 +36,4 @@ rules:
   - .svg
   keywords: []
   name: Images
-  sub: true
-- destination: Installers\
-  extensions:
-  - .msi
-  - .exe
-  keywords: []
-  name: Installers
   sub: true
