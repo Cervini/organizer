@@ -259,28 +259,15 @@ def create_folder(new_path):
     downloads_dir = locate_folder_path()
     directory = os.path.join(downloads_dir, new_path)
     try:
-        os.mkdir(directory)
-        logger.info(f"Directory '{directory}' created.")
-    except FileExistsError:
-        # This is not an error, the folder is already there as we wanted.
-        logger.warning(f"Directory '{directory}' already exists.")
+        # Create the entire path.
+        os.makedirs(directory, exist_ok=True)
+        logger.info(f"Directory '{directory}' is ready.")
     except Exception as e:
         logger.exception(f"An error occurred while trying to create directory '{directory}'.")
 
 def create_folders():
     """Create the deafult folders named in the default config.yaml"""
-    # locate Download directory
-    downloads_dir = locate_folder_path()
-
     types = ["Images", "Documents", "Installers", "Archives"]
 
     for type in types:
-        directory = os.path.join(downloads_dir, type)
-        try:
-            os.mkdir(directory)
-            logger.info(f"{type} directory created.")
-        except FileExistsError:
-            logger.warning(f"Couldn't create {type} directory because it already existed.")
-            continue # if the directory already exists do nothing
-        except Exception as e:
-            logger.exception(f"An error occurred while trying to create {type} directory.")
+        create_folder(type)
