@@ -76,11 +76,6 @@ def locate_folder_path() -> Optional[str]:
             return None
     else: # macOS and Linux
         return os.path.join(os.path.expanduser('~'), 'Downloads')
-    
-def filter_file_name(path) -> str:
-    """Given a path returns only the file name"""
-    name = path.split("/")
-    return name[-1]
 
 def load_config():
     """Returns the content of config.yaml"""
@@ -176,11 +171,6 @@ def add_rule(new_rule):
             save_config(config)
             logger.info(f"Added {new_rule} rule to config.yaml")
 
-def filter_file_name(path) -> str:
-    """Returns the name of a file given the path"""
-    name = path.split(f"\\")
-    return name[-1]
-
 def file_sorter():
     """Reads all the files in the default Download directory and moves them following the rulers in config.yaml"""
     # locate Download directory
@@ -230,7 +220,7 @@ def file_sorter():
                     # Move the file
                     try:
                         shutil.move(file_path, destination_folder)
-                        logger.info(f"Moved {filter_file_name(file_path)} to {destination_folder}.")
+                        logger.info(f"Moved {os.path.basename(file_path)} to {destination_folder}.")
                         break # Stop checking rules for this file
                     except Exception as e:
                         logger.exception(f"Error moving {file_path}.")
@@ -244,7 +234,7 @@ def get_final_name(file_path, file_name, file_extension, destination_folder) -> 
     """Renames the file if there is already a file with the same name in the destination folder"""
     count = 1
     new_name = file_name
-    while os.path.isfile(os.path.join(destination_folder,filter_file_name(new_name)+file_extension)):
+    while os.path.isfile(os.path.join(destination_folder,os.path.basename(new_name)+file_extension)):
         # rename the new file
         new_name = file_name+"("+str(count)+")"
         os.rename(file_path, new_name+file_extension)

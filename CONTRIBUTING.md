@@ -52,14 +52,6 @@ There are many ways to contribute to this project:
    python source/main.py
    ```
 
-### Development Environment
-
-**Recommended tools:**
-- **IDE:** VS Code with Python extension
-- **Linting:** flake8 or pylint
-- **Formatting:** black or autopep8
-- **Testing:** pytest (when tests are added)
-
 ## 📋 Development Guidelines
 
 ### Code Style
