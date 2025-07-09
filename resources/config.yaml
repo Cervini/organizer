@@ -1,5 +1,22 @@
-interval: 1
+interval: 2
 rules:
+- destination: Documents\
+  extensions:
+  - .pdf
+  - .docx
+  - .txt
+  keywords: []
+  name: Documents
+  sub: true
+- destination: Archives\
+  extensions:
+  - .zip
+  - .rar
+  - .7z
+  - .gz
+  keywords: []
+  name: Archives
+  sub: true
 - destination: Images\
   extensions:
   - .jpg
@@ -13,27 +30,10 @@ rules:
   keywords: []
   name: Images
   sub: true
-- destination: Archives\
-  extensions:
-  - .zip
-  - .rar
-  - .7z
-  - .gz
-  keywords: []
-  name: Archives
-  sub: true
 - destination: Installers\
   extensions:
   - .msi
   - .exe
   keywords: []
   name: Installers
-  sub: true
-- destination: Documents\
-  extensions:
-  - .pdf
-  - .docx
-  - .txt
-  keywords: []
-  name: Documents
   sub: true

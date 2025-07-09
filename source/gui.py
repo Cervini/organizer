@@ -79,33 +79,6 @@ def open_config_window_threaded():
     config_thread.daemon = True
     config_thread.start()
 
-def open_delete_window_threaded(rule, parent_window, frame_to_refresh):
-    """Starts the delete confirmation window in a new thread."""
-    delete_thread = threading.Thread(
-        target=open_delete_window,
-        args=(rule, parent_window, frame_to_refresh)
-    )
-    delete_thread.daemon = True
-    delete_thread.start()
-
-def open_edit_window_threaded(rule, parent_window, frame_to_refresh):
-    """Starts the rule editing window in a new thread."""
-    edit_thread = threading.Thread(
-        target=open_edit_window,
-        args=(rule, parent_window, frame_to_refresh)
-    )
-    edit_thread.daemon = True
-    edit_thread.start()
-
-def open_add_window_threaded(parent_window, frame_to_refresh):
-    """Starts the rule adding window in a new thread."""
-    add_thread = threading.Thread(
-        target=open_add_window,
-        args=(parent_window, frame_to_refresh)
-    )
-    add_thread.daemon = True
-    add_thread.start()
-
 def refresh_rules_list(frame):
     """Clears and redraws all rule cards in the given frame."""
     # Destroy all current widgets in the frame
@@ -121,41 +94,48 @@ def refresh_rules_list(frame):
 
 def create_rule_cards(parent_frame, rules):
     """Creates and packs all the rule card widgets into the parent_frame."""
-    # Get the parent window from the frame
     config_window = parent_frame.winfo_toplevel()
     for rule in rules:
-        rule_frame = ttk.LabelFrame(parent_frame, text=f"{rule.get('name', 'N/A')}", padding="15", bootstyle="primary")
+        rule_frame = ttk.LabelFrame(parent_frame, text=f"{rule.get('name', 'N/A')}", padding="10", bootstyle="primary")
         rule_frame.pack(pady=10, padx=10, fill="x")
 
-        ttk.Label(rule_frame, text="Extensions:").grid(row=0, column=0, sticky="w", pady=2)
+        # --- Grid Configuration ---
+        # Configure column 1 to take up any extra space, pushing the buttons to the right
+        rule_frame.columnconfigure(1, weight=1)
+
+        # --- Labels and Values (Columns 0 and 1) ---
+        ttk.Label(rule_frame, text="Extensions:").grid(row=0, column=0, sticky="w", pady=2, padx=5)
         ext_text = ", ".join(rule.get('extensions', [])) or "Any"
         ttk.Label(rule_frame, text=ext_text, wraplength=350).grid(row=0, column=1, sticky="w")
 
-        ttk.Label(rule_frame, text="Keywords:").grid(row=1, column=0, sticky="w", pady=2)
+        ttk.Label(rule_frame, text="Keywords:").grid(row=1, column=0, sticky="w", pady=2, padx=5)
         key_text = ", ".join(rule.get('keywords', [])) or "None"
         ttk.Label(rule_frame, text=key_text, wraplength=350).grid(row=1, column=1, sticky="w")
 
-        ttk.Label(rule_frame, text="Destination:").grid(row=2, column=0, sticky="w", pady=2)
+        ttk.Label(rule_frame, text="Destination:").grid(row=2, column=0, sticky="w", pady=2, padx=5)
         ttk.Label(rule_frame, text=rule.get('destination', 'N/A')).grid(row=2, column=1, sticky="w")
 
+        # --- Buttons (Column 2) ---
         button_frame = ttk.Frame(rule_frame)
-        button_frame.grid(row=3, column=1, sticky="e", pady=10)
+        # Place the frame in the third column, spanning all three rows, and stick it to the top-right
+        button_frame.grid(row=0, column=2, rowspan=3, sticky="ne", padx=5, pady=5)
 
         edit_button = ttk.Button(
             button_frame,
             text="Edit",
-            command=lambda r=rule: open_edit_window_threaded(r, config_window, parent_frame),
-            bootstyle="primary" # Solid primary color button
+            command=lambda r=rule: open_edit_window(r, config_window, parent_frame),
+            bootstyle="primary"
         )
-        edit_button.pack(side="left")
+        # Pack the buttons to stack them vertically
+        edit_button.pack(fill='x')
 
         delete_button = ttk.Button(
             button_frame,
             text="Delete",
-            command=lambda r=rule: open_delete_window_threaded(r, config_window, parent_frame),
-            bootstyle="danger" # Red button for destructive actions
+            command=lambda r=rule: open_delete_window(r, config_window, parent_frame),
+            bootstyle="danger"
         )
-        delete_button.pack(side="left")
+        delete_button.pack(fill='x', pady=5)
 
         # --- Bindings for Drag and Drop ---
         # Bind events to the main frame of the rule card
@@ -179,11 +159,30 @@ def set_window_icon(window):
     else:
         window.iconbitmap(utils.root_path("resources/broom.xbm"))
 
+config_window_instance = None
+
 def open_config_window():
-    """Opens a window to see the rules applied"""
+    """
+    Opens the configuration window. Creates it if it doesn't exist,
+    otherwise, it just shows the existing window.
+    """
+    global config_window_instance
+
+    # If window exists, just bring it to the front
+    if config_window_instance is not None and config_window_instance.winfo_exists():
+        config_window_instance.deiconify() # Un-hides the window
+        config_window_instance.lift() # Brings to the front
+        config_window_instance.focus_set() # Gives it focus
+        return
+
+    # If window doesn't exist, create it
     config_window = ttk.Window(themename="litera")
-    set_window_icon(config_window)
+    config_window_instance = config_window # Store the instance
     config_window.title("Configure Rules")
+    set_window_icon(config_window)
+    
+    config_window.protocol("WM_DELETE_WINDOW", config_window.withdraw)
+
     w, h = 800, 500
     ws, hs = config_window.winfo_screenwidth(), config_window.winfo_screenheight()
     x, y = (ws/2) - (w/2), (hs/2) - (h/2)
@@ -199,7 +198,7 @@ def open_config_window():
         top_frame,
         text="Add New Rule",
         # The command will call a new threaded function
-        command=lambda: open_add_window_threaded(config_window, scrollable_frame),
+        command=lambda: open_add_window(config_window, scrollable_frame),
         bootstyle="success-outline" # Green outline button
     )
     add_button.pack(side="left")
@@ -270,7 +269,7 @@ def open_delete_window(rule, parent_window, frame_to_refresh):
     delete_window = tk.Toplevel(parent_window)
     set_window_icon(delete_window)
     delete_window.title("Confirm Delete")
-    w, h = 250, 100
+    w, h = 350, 100
     ws, hs = delete_window.winfo_screenwidth(), delete_window.winfo_screenheight()
     x, y = (ws/2) - (w/2), (hs/2) - (h/2)
     delete_window.geometry('%dx%d+%d+%d' % (w, h, x, y))
@@ -302,7 +301,7 @@ def open_edit_window(rule, parent_window, frame_to_refresh):
     edit_window = tk.Toplevel(parent_window)
     set_window_icon(edit_window)
     edit_window.title("Edit "+ rule.get("name"))
-    w, h = 400, 400
+    w, h = 350, 300
     ws, hs = edit_window.winfo_screenwidth(), edit_window.winfo_screenheight()
     x, y = (ws/2) - (w/2), (hs/2) - (h/2)
     edit_window.geometry('%dx%d+%d+%d' % (w,h,x,y))
@@ -377,7 +376,7 @@ def open_add_window(parent_window, frame_to_refresh):
     add_window = tk.Toplevel(parent_window)
     set_window_icon(add_window)
     add_window.title("Add New Rule")
-    w, h = 350, 200
+    w, h = 350, 300
     ws, hs = add_window.winfo_screenwidth(), add_window.winfo_screenheight()
     x, y = (ws/2) - (w/2), (hs/2) - (h/2)
     add_window.geometry('%dx%d+%d+%d' % (w, h, x, y))

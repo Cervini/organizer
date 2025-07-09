@@ -155,6 +155,8 @@ def delete_rule_from_config(rule_name):
 def add_rule(new_rule):
     """Appends a new rule to the config."""
     config = load_config()
+    if new_rule.get("sub"):
+        create_folder(new_rule.get("destination"))
     if config is not None:
         rules = config.get("rules", [])
         rules.append(new_rule)
@@ -231,7 +233,13 @@ def file_sorter():
                 except Exception as e:
                     logger.exception(f"Error moving {file_path}.")
                     break
-       
+
+def create_folder(new_path):
+    # locate Download directory
+    downloads_dir = locate_folder_path()
+    directory = os.path.join(downloads_dir, new_path)
+    os.mkdir(directory)
+
 def create_folders():
     """Create the deafult folders named in the default config.yaml"""
     # locate Download directory
