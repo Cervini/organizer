@@ -109,6 +109,8 @@ def get_interval():
 
 def save_interval(interval_minutes):
     """Saves the sorting interval to the config.yaml file."""
+    if interval_minutes <= 0:
+        interval_minutes = 5
     config = load_config()
     if config is None:
         config = {'rules': [], 'interval': 5}
