@@ -1,0 +1,26 @@
+# Ignore Docker and git files
+.dockerignore
+Dockerfile
+.git
+.gitignore
+
+# Ignore Python cache and virtual environment
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+venv/
+.venv/
+
+# Ignore build artifacts
+build/
+dist/
+Output/
+*.exe
+*.spec
+
+# IDE and OS-specific files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

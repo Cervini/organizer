@@ -5,55 +5,70 @@ import pystray
 from PIL import Image
 import utils
 import gui
+import logging
+import os
 
+# Get the logger from utils
+logger = utils.setup_logging()
 stop_event = threading.Event()
 
-# -- Core application logic --
 def organize_files_loop():
-    """ Run file sorter every set amount of time read from config file"""
+    """Run file sorter every set amount of time read from config file"""
     while not stop_event.is_set():
         utils.file_sorter()
-        interval = utils.get_interval()*60
-        for _ in range(interval*60):
+        # Use a short sleep and check the interval inside the loop
+        # to make it responsive to changes.
+        interval_seconds = utils.get_interval() * 60
+        # This creates a more responsive way to wait that respects the stop_event
+        for _ in range(interval_seconds):
             if stop_event.is_set():
                 break
-            if utils.get_interval()*60 != interval:
-                utils.logger.info(f"Time interval updated, set to {utils.get_interval()}.")
-                break
-            # waiting 1 second at a times allows to promptly stop the loop
             time.sleep(1)
 
-def exit_action(icon, item):
+def exit_action():
+    """Stops all threads and exits the application."""
+    logger.info("Exit action called. Stopping threads.")
     stop_event.set()
-    icon.stop()
+    # A more forceful exit to ensure the container stops
+    os._exit(0)
 
-# -- Main --
-def main():
-    utils.setup_logging()
-
-    # Use the robust function to find the image in the resources folder
-    image_path = utils.root_path("resources/broom.png")
-
+def run_tray_icon():
+    """Function to set up and run the system tray icon."""
     try:
+        image_path = utils.root_path("resources/broom.png")
         image = Image.open(image_path)
-    except FileNotFoundError:
-        # if not found, create placeholder
-        utils.logger.warning(f"Icon file not found at {image_path}. Using placeholder.")
-        image = Image.new('RGB', (64, 64), 'black')
+        # Use a lambda to avoid issues with passing the icon object to the exit function
+        menu = (item('Configure Rules', gui.open_config_window_threaded), item('Exit', lambda: exit_action()))
+        icon = pystray.Icon("Organizer", image, "Organizer", menu)
+        logger.info("Attempting to start system tray icon.")
+        icon.run()
+    except Exception as e:
+        # This error is expected in environments without a system tray (like Docker)
+        logger.warning(f"Failed to create system tray icon: {e}")
+        logger.warning("This is expected in Docker. The application will continue without a tray icon.")
+        # The thread will simply exit if the icon cannot be created.
 
-    # link menu items to functions
-    menu = (item('Configure Rules', gui.open_config_window_threaded), item('Exit', exit_action),)
-
-    # create icon instance
-    icon = pystray.Icon("Organizer", image, "Organizer", menu)
-
-    # Create and start background thread for organization logic
+def main():
+    """Main function to start the application."""
+    # Start the background file organizer thread
     organization_thread = threading.Thread(target=organize_files_loop)
-    organization_thread.daemon = True # Allows main program to exit even if thread is running
+    organization_thread.daemon = True
     organization_thread.start()
 
-    # run system tray icon
-    icon.run()
+    # Start the system tray icon in its own thread.
+    # If it fails, it will not block the main application.
+    tray_thread = threading.Thread(target=run_tray_icon)
+    tray_thread.daemon = True
+    tray_thread.start()
+
+    # Start the main GUI window. This is a blocking call that starts
+    # the tkinter main loop. The application will run until this window is closed.
+    gui.open_config_window()
+
+    # When the GUI window is closed, the script will continue from here.
+    logger.info("Main GUI window closed. Shutting down.")
+    exit_action()
+
 
 if __name__ == "__main__":
     main()

@@ -152,13 +152,22 @@ def create_rule_cards(parent_frame, rules):
             child.bind("<ButtonRelease-1>", lambda e, f=parent_frame: on_drag_end(e, f))
 
 def set_window_icon(window):
-    """Sets the broom icon to the window based on the OS"""
-    if sys.platform == "win32":
-        window.iconbitmap(utils.root_path("resources/broom.ico"))
-    elif sys.platform == "darwin":
-        window.iconbitmap(utils.root_path("resources/broom.png"))
-    else:
-        window.iconbitmap(utils.root_path("resources/broom.xbm"))
+    """Sets the broom icon for the window based on the OS."""
+    try:
+        if sys.platform == "win32":
+            # .ico is best for Windows
+            icon_path = utils.root_path("resources/broom.ico")
+            window.iconbitmap(icon_path)
+        else:
+            # .png is more reliable for Linux/macOS with PhotoImage
+            icon_path = utils.root_path("resources/broom.png")
+            photo = tk.PhotoImage(file=icon_path)
+            # The icon needs to be attached to the window object to prevent garbage collection
+            window.iconphoto(True, photo)
+    except Exception as e:
+        # Log if the icon fails to load, but don't crash the app
+        utils.logger.warning(f"Could not set window icon from {icon_path}: {e}")
+
 
 config_window_instance = None
 

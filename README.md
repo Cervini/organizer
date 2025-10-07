@@ -6,20 +6,20 @@
 
 A cross-platform desktop utility that automatically organizes your Downloads folder based on configurable rules. Features a system tray interface with an intuitive GUI for managing file sorting rules, drag-and-drop rule reordering, and customizable sorting intervals.
 
-## ✨ Features
+## Features
 
-- **🔄 Automatic file organization**: Runs silently in the background and sorts files at customizable intervals
-- **🎯 System tray integration**: Clean, unobtrusive interface with easy access to all features
-- **📋 Configurable rules**: Create custom rules based on file extensions and filename keywords
-- **🎨 Modern GUI**: User-friendly interface built with ttkbootstrap for managing sorting rules
-- **🔀 Drag-and-drop reordering**: Easily reorganize rule priority by dragging rule cards
-- **📁 Flexible destinations**: Sort files into Downloads subfolders or absolute paths
-- **🔍 Smart file handling**: Automatically handles duplicate filenames with incremental numbering
-- **⚙️ Adjustable intervals**: Customize how frequently the organizer scans for new files
-- **🚀 Quick actions**: Manual sort and default folder creation buttons
-- **📊 Comprehensive logging**: Detailed logs stored in system AppData directory
+- **Automatic file organization**: Runs silently in the background and sorts files at customizable intervals
+- **System tray integration**: Clean, unobtrusive interface with easy access to all features
+- **Configurable rules**: Create custom rules based on file extensions and filename keywords
+- **Modern GUI**: User-friendly interface built with ttkbootstrap for managing sorting rules
+- **Drag-and-drop reordering**: Easily reorganize rule priority by dragging rule cards
+- **Flexible destinations**: Sort files into Downloads subfolders or absolute paths
+- **Smart file handling**: Automatically handles duplicate filenames with incremental numbering
+- **Adjustable intervals**: Customize how frequently the organizer scans for new files
+- **Quick actions**: Manual sort and default folder creation buttons
+- **Comprehensive logging**: Detailed logs stored in system AppData directory
 
-## 🚀 Installation
+## Installation
 
 ### Option 1: Download Pre-built Installer (Recommended)
 
@@ -70,7 +70,7 @@ A cross-platform desktop utility that automatically organizes your Downloads fol
    - Click **Build → Compile**
    - Find the installer in the `Output/` folder
 
-## 🎯 Usage
+## Usage
 
 ### Getting Started
 
@@ -140,7 +140,7 @@ Destination: C:\Work\Documents\
 Subfolder: ✗
 ```
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 organizer/
@@ -157,7 +157,7 @@ organizer/
 └── README.md
 ```
 
-## ⚙️ Configuration
+## Configuration
 
 ### Default Rules
 
@@ -192,7 +192,7 @@ Logs are automatically created in:
 
 Features rotating logs (5MB max, 5 backups) with detailed operation tracking.
 
-## 🔧 Technical Details
+## Technical Details
 
 **Built with:**
 - **Python 3.12+** - Core application logic
@@ -207,12 +207,12 @@ Features rotating logs (5MB max, 5 backups) with detailed operation tracking.
 - **macOS** - Compatible (build from source)
 - **Linux** - Compatible (build from source)
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome!
 See the [CONTRIBUTING](CONTRIBUTING.md) file for details.
 
-## 📋 Future Enhancements
+## Future Enhancements
 
 - [ ] Auto-updater functionality
 - [ ] Advanced rule conditions (file size, date, etc.)
@@ -220,11 +220,11 @@ See the [CONTRIBUTING](CONTRIBUTING.md) file for details.
 - [ ] Rule templates and sharing
 - [ ] Statistics and usage analytics
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-## 📞 Support
+## Support
 
 - **Issues:** [GitHub Issues](https://github.com/Cervini/organizer/issues)
 - **Discussions:** [GitHub Discussions](https://github.com/Cervini/organizer/discussions)
